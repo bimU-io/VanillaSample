@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>bimU.io Viewer API Example</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <script src="https://cdn.jsdelivr.net/npm/three@0.113.2/build/three.min.js" crossorigin="anonymous"></script>
+		<script src="https://cdn.jsdelivr.net/npm/bimu.io.viewer@latest/dist/bimU.io.Viewer.umd.js" crossorigin="anonymous"></script>
+	</head>
+	<body>
+		<h1 style="text-align: center;">bimU.io Viewer API Example</h1>
+		<div id="viewer" style="width:1000px;height:500px;background-color: black;border: 5px solid black;margin: auto;"></div>
+		<script type="text/javascript">
+			let viewerConfigs = {
+				domElementId: "viewer",
+				showUI: true
+			};
+			let viewer = new bimU.Viewer(viewerConfigs);
+			viewer.initialize();			
+
+			let onPorgress = (e) => { 
+				console.log(e);
+				viewer.showDialog("Loading...", "Progress:" + e.progress, "Close", null, null, true);
+			};
+			let onLoaded = (e) => { 
+				console.log(e);
+				viewer.closeDialog();
+			};
+			let onError = (e) => { 
+				console.log(e);
+				viewer.showDialog("Error", "Wrong password", "Close", null, null, true);
+			};
+			let onSubmit = () => {				
+				viewer.closeDialog();
+				let password = document.getElementById("password-input").value;
+				console.log("Password input: ", password);
+				let modelConfigs = {
+					modelId: "YOUR_MODEL_ID",
+					password: password
+				};
+				viewer.loadModel(modelConfigs, onPorgress, onLoaded, onError);
+			};
+			let modalTitle = "Protected Content";
+			let modalBody = `
+				<div>Input password</div>
+				<div style="margin-top: 15px;">
+					<input style="padding: 10px;border: 1px solid #ccc;border-radius: 4px;" placeholder="Enter your password here" id="password-input" type="password" class="validate">
+				</div>
+			`;
+			viewer.showDialog(modalTitle, modalBody, null, "OK", onSubmit, false);
+		</script>
+	</body>
+</html>
